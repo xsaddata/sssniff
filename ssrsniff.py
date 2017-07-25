@@ -1,3 +1,35 @@
+#! /usr/bin/env python
+
+from scipy.stats import entropy
+from scapy.all import *
+import numpy as np
+import dpkt
+
+def conn(ip1, ip2, port1, port2):
+	swap = False
+
+	if ip1 > ip2:
+		ip1, ip2 = ip2, ip1
+		port1, port2 = port2, port1
+		swap = True
+
+	if ip1 == ip2 and port1 > port2:
+		port1, port2 = port2, port1
+		swap = True
+
+	return (ip1, ip2, port1, port2), swap
+
+def dist(str):
+	p = np.zeros(256)
+	for i in str:
+		p[ord(i)] += 1
+	return p
+
+score = {}
+blocked = {}
+thres = 16
+sample = 0
+limit = 40000
 
 def add_score(c, x):
 	if blocked.has_key(c):
